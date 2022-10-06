@@ -1,5 +1,8 @@
 package com.tutego.date4u.core.profile;
 
+
+
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 

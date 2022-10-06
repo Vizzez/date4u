@@ -2,6 +2,7 @@ package com.tutego.date4u.interfaces.shell;
 
 import com.tutego.date4u.core.profile.Profile;
 import com.tutego.date4u.core.profile.ProfileRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Lazy;
@@ -20,7 +21,7 @@ public class RepositoryCommands {
     this.profiles = profiles;
     currentPage = Lazy.of( () -> profiles.findAll( PageRequest.ofSize( PAGE_SIZE ) ) );
   }
-
+  @Transactional
   @ShellMethod( "Display all profiles" )
   public List<Profile> list() {
     return currentPage.get().getContent();

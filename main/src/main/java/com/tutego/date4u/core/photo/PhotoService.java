@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.io.UncheckedIOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,7 +47,7 @@ public class PhotoService {
   public String upload( byte[] imageBytes ) {
     Future<byte[]> thumbnailBytes = thumbnail.thumbnail( imageBytes );
 
-    String imageName = UUID.randomUUID().toString();
+    String imageName = UUID.randomUUID().toString().replace("-","");
 
     //    NewPhotoEvent newPhotoEvent = new NewPhotoEvent( imageName, OffsetDateTime.now() );
     //    publisher.publishEvent( newPhotoEvent );
@@ -61,7 +61,7 @@ public class PhotoService {
       fs.store( imageName + "-thumb.jpg", thumbnailBytes.get() );
     }
     catch ( InterruptedException | ExecutionException e ) {
-      throw new IllegalStateException( e );
+//      throw new IllegalStateException( e );
     }
 
     return imageName;

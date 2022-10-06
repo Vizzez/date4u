@@ -1,6 +1,6 @@
 package com.tutego.date4u.core.profile;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Access( AccessType.FIELD )

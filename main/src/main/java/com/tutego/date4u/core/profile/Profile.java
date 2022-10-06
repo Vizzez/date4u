@@ -1,9 +1,10 @@
 package com.tutego.date4u.core.profile;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tutego.date4u.core.photo.Photo;
 import org.springframework.lang.Nullable;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,13 +31,14 @@ public class Profile {
   private String description;
   private LocalDateTime lastseen;
 
-  @OneToOne( mappedBy = "profile" )
+  @OneToOne( mappedBy = "profile", fetch = FetchType.LAZY)
   private Unicorn unicorn;
 
-  @OneToMany( mappedBy = "profile", fetch = FetchType.EAGER )
+  @OneToMany( mappedBy = "profile", fetch = FetchType.EAGER, cascade=CascadeType.ALL )
+  @JsonManagedReference
   private List<Photo> photos = new ArrayList<>();
 
-  @ManyToMany( fetch = FetchType.EAGER )
+  @ManyToMany( fetch = FetchType.LAZY )
   @JoinTable(
       name = "Likes",
       joinColumns = @JoinColumn( name = "liker_fk" ),
@@ -44,7 +46,7 @@ public class Profile {
   )
   private Set<Profile> profilesThatILike = new HashSet<>();
 
-  @ManyToMany( fetch = FetchType.EAGER )
+  @ManyToMany( fetch = FetchType.LAZY )
   @JoinTable(
       name = "Likes",
       joinColumns = @JoinColumn( name = "likee_fk" ),

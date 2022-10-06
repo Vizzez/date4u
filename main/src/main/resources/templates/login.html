@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login page</title>
+    <link th:href="@{/public/style.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.0/dist/quartz/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container-fluid"><div class="navbar-nav">
+            <a class="navbar-brand" href="#">Date4u</a>
+            <a class="nav-item nav-link" href="/">Home</a>
+            <a class="nav-link nav-item" href="/profile">Profile</a>
+            <a class="nav-link nav-item" href="/search">Search</a>
+        </div></div>
+    </nav>
+    <div class="jumbotron">
+        <div>fillmore.fat@wyman.co</div>
+        <div>u87szdzwr6j</div>
+        <h1 class="display-4" th:text="#{home.welcome}"></h1>
+        <form th:action="@{/login}" method="post">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" autofocus="autofocus" />
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" />
+            <input id="submit" type="submit" value="Log in" />
+        </form>
+        <p th:if="${loginError}" class="error">Wrong user or password</p>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

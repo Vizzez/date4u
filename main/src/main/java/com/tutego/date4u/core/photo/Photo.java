@@ -1,12 +1,14 @@
 package com.tutego.date4u.core.photo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tutego.date4u.core.profile.Profile;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Access( AccessType.FIELD )
@@ -15,8 +17,9 @@ public class Photo {
   @Id @GeneratedValue( strategy = GenerationType.IDENTITY )
   private Long id;
 
-  @ManyToOne
+  @ManyToOne()
   @JoinColumn( name = "profile_fk" )
+  @JsonBackReference
   private Profile profile;
 
   @NotNull @Pattern( regexp = "\\w{1,200}" )
@@ -31,7 +34,7 @@ public class Photo {
   protected Photo() {
   }
 
-  public Photo( Long id, Profile profile, String name, boolean isProfilePhoto, LocalDateTime created ) {
+  public Photo(Long id, Profile profile, String name, boolean isProfilePhoto, LocalDateTime created ) {
     this.id = id;
     this.profile = profile;
     this.name = name;
