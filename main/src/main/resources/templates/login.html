@@ -2,33 +2,63 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login page</title>
-    <link th:href="@{/public/style.css}" rel="stylesheet" />
+    <!--    <link th:href="@{/public/style.css}" rel="stylesheet" />-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.0/dist/quartz/bootstrap.min.css">
+    <link th:href="@{/css/wickedcss.min.css}" rel="stylesheet" />
+    <style>
+        .form-c {
+            width: 500px;
+            box-shadow: inset 1px 1px rgb(255 255 255 / 20%), inset -1px -1px rgb(255 255 255 / 10%), 1px 3px 24px -1px rgb(0 0 0 / 15%);
+            background-color: transparent;
+            background-image: linear-gradient(125deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2) 70%);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            --bs-secondary-rgb: transparent;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            /*height: 600px;*/
+            height: fit-content;
+        }
+
+
+        .centered-element {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-        <div class="container-fluid"><div class="navbar-nav">
-            <a class="navbar-brand" href="#">Date4u</a>
-            <a class="nav-item nav-link" href="/">Home</a>
-            <a class="nav-link nav-item" href="/profile">Profile</a>
-            <a class="nav-link nav-item" href="/search">Search</a>
-        </div></div>
-    </nav>
+    <div th:insert="fragments/nav::navbar"></div>
     <div class="jumbotron">
-        <div>fillmore.fat@wyman.co</div>
-        <div>u87szdzwr6j</div>
-        <h1 class="display-4" th:text="#{home.welcome}"></h1>
-        <form th:action="@{/login}" method="post">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" autofocus="autofocus" />
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" />
-            <input id="submit" type="submit" value="Log in" />
-        </form>
+
+        <h1 class="display-4 text-center" th:text="#{home.welcome}"></h1>
+        <h3 class="display-6 text-center"> Melden Sie sich zuerst an.</h3>
+        <div class="form-c centered-element">
+            <form th:action="@{/login}" method="post" class="d-flex flex-column">
+                <div class="">
+                    <label for="username" class="form-label">E-Mail</label>
+                    <input type="email" name="username" id="username" class="form-control" value="fillmore.fat@wyman.co">
+                </div>
+                <div class="mt-1">
+                    <label for="password" class="form-label">Passwort</label>
+                    <input type="password" name="password" id="password" class="form-control" value="u87szdzwr6j" >
+                </div>
+                <div class="mt-1">
+                    <button type="submit" class="btn btn-primary" style="float:right" >Log in</button>
+                </div>
+
+
+            </form>
+        </div>
         <p th:if="${loginError}" class="error">Wrong user or password</p>
     </div>
+
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>

@@ -1,7 +1,7 @@
 package com.tutego.date4u.core.configuration;
 
-import com.tutego.date4u.core.profile.Unicorn;
-import com.tutego.date4u.core.profile.UnicornRepository;
+import com.tutego.date4u.core.entities.Unicorn;
+import com.tutego.date4u.core.repositories.UnicornRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,9 +22,9 @@ public class UnicornDetailsService implements UserDetailsService {
          System.out.println("User not found " + username );
          throw new UsernameNotFoundException( "User not found " + username );
       }
-      return new org.springframework.security.core.userdetails.User(
-            unicorn.get().getEmail(),
-            unicorn.get().getPassword(),
-            Collections.emptyList() );
+
+      return new UnicornUser(unicorn.get().getEmail(), unicorn.get().getPassword(), Collections.emptyList(),unicorn.get().getProfile().getId(),unicorn.get().getProfile().getNickname());
    }
+
+
 }

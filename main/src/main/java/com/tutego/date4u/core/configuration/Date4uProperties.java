@@ -1,6 +1,7 @@
 package com.tutego.date4u.core.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,5 +27,10 @@ public class Date4uProperties {
   }
   public void setFilesystem( Filesystem filesystem ) {
     this.filesystem = filesystem;
+  }
+
+  @Bean
+  public ActiveUserStore activeUserStore(){
+    return new ActiveUserStore();
   }
 }

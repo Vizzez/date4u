@@ -1,54 +1,103 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <meta charset="ISO-8859-1">
-    <title>Sign Up - CodeJava</title>
+    <meta charset="UTF-8">
+    <title>index</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.0/dist/quartz/bootstrap.min.css">
+    <style>
+        .form-c{
+            width:500px;
+            box-shadow: inset 1px 1px rgb(255 255 255 / 20%), inset -1px -1px rgb(255 255 255 / 10%), 1px 3px 24px -1px rgb(0 0 0 / 15%);
+            background-color: transparent;
+            background-image: linear-gradient(125deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2) 70%);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            --bs-secondary-rgb: transparent;
+            border-radius:10px;
+            padding:20px;
+            position: relative;
+            /*height: 600px;*/
+            height: fit-content;
+        }
+
+
+        .centered-element {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .form-select, #hornlengthInput, #birthday {
+            width: 225px;
+        }
+
+    </style>
 </head>
 <body>
-<div class="container text-center">
-    <div>
-        <h1>User Registration - Sign Up</h1>
+<div class="container">
+    <div th:insert="fragments/nav::navbar"></div>
+    <h1 class="text-center mt-2" style="float:left;">Registrierung:</h1>
+    <div class="jumbotron">
+
+        <form data-th-object="${registerFormData}" data-th-action="@{/register}" method="post">
+            <div class="form-c centered-element">
+                <div class="">
+                    <label for="email" class="form-label">E-Mail</label>
+                    <input type="email" data-th-field="*{email}" name="email" id="email" class="form-control" >
+                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="badge bg-primary">Primary</span>
+                </div>
+                <div class="mb-2">
+                    <label for="password" class="form-label">Passwort</label>
+                    <input type="password" data-th-field="*{password}" name="password" id="password" class="form-control" >
+                    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="badge bg-primary">Primary</span>
+                </div>
+                <div class="mb-2">
+                    <label for="nicknameInput" class="form-label">Nickname</label>
+                    <input type="text" data-th-field="*{nickname}" id="nicknameInput"
+                           class="form-control" >
+                    <span th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="badge bg-primary">Primary</span>
+                </div>
+                <div class="d-flex mb-2 justify-content-center">
+                    <div class="form-group" style="margin-right: 10px;">
+                        <label for="birthday" class="form-label">Geburtstag</label>
+                        <input class="form-control" type="date" id="birthday" name="birthday"
+                               data-th-field="*{birthdate}" >
+                        <span th:if="${#fields.hasErrors('birthdate')}" th:errors="*{birthdate}" class="badge bg-primary">Primary</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="hornlengthInput" class="form-label">Hornlänge</label>
+                        <input type="number" data-th-field="*{hornlength}" id="hornlengthInput"
+                               class="form-control" >
+                        <span th:if="${#fields.hasErrors('hornlength')}" th:errors="*{hornlength}" class="badge bg-primary">Primary</span>
+                    </div>
+                </div>
+
+                <div class="d-flex mb-2 justify-content-center">
+                    <div class="form-group" style="margin-right: 10px">
+                        <label for="genderInput" class="form-label">Geschlecht</label>
+                        <select class="form-select" data-th-field="*{gender}" id="genderInput">
+                            <option value="1">Männlich</option>
+                            <option value="2">Weiblich</option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="badge bg-primary">Primary</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="genderInput" class="form-label">Interessiert an</label>
+                        <select class="form-select" data-th-field="*{attractedToGender}" id="attractedToInput">
+                            <option value="1">Männern</option>
+                            <option value="2">Frauen</option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('attractedToGender')}" th:errors="*{attractedToGender}" class="badge bg-primary">Primary</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="float:right" >registrieren</button>
+            </div>
+
+        </form>
+
     </div>
-    <form th:action="@{/process_register}" th:object="${user}"
-          method="post" style="max-width: 600px; margin: 0 auto;">
-        <div class="m-3">
-            <div class="form-group row">
-                <label class="col-4 col-form-label">E-mail: </label>
-                <div class="col-8">
-                    <input type="email" th:field="*{email}" class="form-control" required />
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-4 col-form-label">Password: </label>
-                <div class="col-8">
-                    <input type="password" th:field="*{password}" class="form-control"
-                           required minlength="6" maxlength="10"/>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-4 col-form-label">First Name: </label>
-                <div class="col-8">
-                    <input type="text" th:field="*{firstName}" class="form-control"
-                           required minlength="2" maxlength="20"/>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-4 col-form-label">Last Name: </label>
-                <div class="col-8">
-                    <input type="text" th:field="*{lastName}" class="form-control"
-                           required minlength="2" maxlength="20" />
-                </div>
-            </div>
-
-            <div>
-                <button type="submit" class="btn btn-primary">Sign Up</button>
-            </div>
-        </div>
-    </form>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 </body>

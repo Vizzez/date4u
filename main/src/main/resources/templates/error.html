@@ -4,46 +4,56 @@
     <meta charset="UTF-8">
     <title>index</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.0/dist/quartz/bootstrap.min.css">
-    <link th:href="@{/css/wickedcss.min.css}" rel="stylesheet"/>
     <style>
-        .form-c {
-            width: 500px;
+        .form-c{
+            width:500px;
             box-shadow: inset 1px 1px rgb(255 255 255 / 20%), inset -1px -1px rgb(255 255 255 / 10%), 1px 3px 24px -1px rgb(0 0 0 / 15%);
             background-color: transparent;
             background-image: linear-gradient(125deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2) 70%);
             -webkit-backdrop-filter: blur(5px);
             backdrop-filter: blur(5px);
             --bs-secondary-rgb: transparent;
-            border-radius: 10px;
-            padding: 20px;
+            border-radius:10px;
+            padding:20px;
             position: relative;
             /*height: 600px;*/
             height: fit-content;
         }
+
     </style>
 </head>
 <body>
 <div class="container">
     <div th:insert="fragments/nav::navbar"></div>
     <div class="jumbotron">
-
-        <h1 class="display-4" th:text="|Willkommen ${name}|"></h1>
-        <div class="d-flex justify-content-center mt-5">
-            <div class="form-c" style="margin-right:20px">
-                <div class="mt-1 mb-1"> Finde dein passendes Einhorn!</div>
-                <a class="btn btn-primary mx-auto" href="/search" role="button" >
-                    Starte die Suche
-                </a>
-            </div>
-            <div class="form-c">
-                <div class="mt-1 mb-1"> Bearbeite dein Profil, um mehr Eindruck bei anderen Einhörnern zu hinterlassen</div>
-                <a class="btn btn-primary mx-auto"  href="/profile" role="button">
-                    Zum Profil
-                </a>
-            </div>
-
+        <div class="mx-auto text-center mt-2 mb-2">
+            Es ist ein Fehler aufgetreten!<br> Bitte wenden Sie sich an das Einhorn mit dem Know-How!
         </div>
-        <div class="text-center mt-5" th:text="'Nutzer online: '+${userOnlineCount}"></div>
+        <table class="table table-hover form-c mx-auto">
+            <tr>
+                <th scope="row">Date</th>
+                <td th:text="${timestamp}"/>
+
+            </tr>
+
+            <tr>
+                <th scope="row">Path</th>
+                <td th:text="${path}"/>
+            </tr>
+            <tr>
+                <th scope="row">Error</th>
+                <td th:text="${error}"/>
+            </tr>
+            <tr>
+                <th scope="row">Status</th>
+                <td th:text="${status}"/>
+            </tr>
+            <tr>
+                <th scope="row">Message</th>
+                <td th:text="${message}"/>
+            </tr>
+        </table>
+
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>

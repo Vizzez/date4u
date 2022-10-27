@@ -48,6 +48,7 @@ public class FileSystem {
     }
   }
 
+
   private Path resolve( String filename ) {
     Path path = root.resolve( filename ).toAbsolutePath().normalize();
     if ( !path.startsWith( root ) )

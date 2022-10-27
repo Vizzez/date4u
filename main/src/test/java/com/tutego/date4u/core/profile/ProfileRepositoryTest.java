@@ -2,6 +2,7 @@ package com.tutego.date4u.core.profile;
 
 
 
+import com.tutego.date4u.core.repositories.ProfileRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

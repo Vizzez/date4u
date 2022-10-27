@@ -8,38 +8,135 @@
     th, td {
         padding: 5px 10px;
     }
-</style>
-<div class="container">
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-        <div class="container-fluid"><div class="navbar-nav">
-            <a class="navbar-brand" href="#">Date4u</a>
-            <a class="nav-item nav-link" href="/">Home</a>
-            <a class="nav-link nav-item" href="/profile">Profile</a>
-            <a class="nav-link nav-item" href="/search">Search</a>
-        </div></div>
-    </nav>
-    <div class="jumbotron">
-        <h1 class="display-4" th:text="#{home.welcome}"></h1>
-        <table>
-            <tr>
-                <th>Nickname</th>
-                <th>Geschlecht</th>
-                <th>Hornlength</th>
-                <th>Birthdate</th>
-            </tr>
-            <tr th:each="profile, custStat : ${profiles}">
-                <td th:text="${profile.nickname}">Nickname</td>
-                <td th:text="${profile.gender}">-1</td>
-<!--                <td th:text="(profile.gender=='1' ? 'M' :(profile.gender=='2'?'W':'Na'))"></td>-->
-<!--                <td th:text="$(profile.gender)==1 ? 'M' : 'W'">-1</td>-->
-                <td th:text="${profile.hornlength}">-1</td>
-                <td th:text="${profile.birthdate}">-1</td>
 
-            </tr>
-        </table>
+    .card {
+        width: 300px;
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .form-control {
+        margin-right: 10px;
+        width: 90px;
+    }
+
+    .form-select {
+        margin-right: 2em;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+        /* Firefox */
+    }
+</style>
+
+<div class="container">
+    <div th:insert="fragments/nav::navbar"></div>
+    <!--    <fieldset class="form-group">-->
+    <!--        <legend class="mt-4">Filtersuche:</legend>-->
+    <!--        <div class="form-check form-switch">-->
+    <!--            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">-->
+    <!--            <label class="form-check-label" for="flexSwitchCheckDefault">Aktivieren</label>-->
+    <!--        </div>-->
+    <!--    </fieldset>-->
+
+    <form data-th-action="@{/search}" th:object="${filter}" method="post" id="formFilterSearch" class="d-flex justify-content-center flex-wrap">
+
+        <div class="form-group">
+            <label for="genderSelect" class="form-label mt-1">Geschlecht: </label>
+            <select class="form-select" id="genderSelect" style="width:unset" data-th-field="*{gender}">
+                <option value="0">Egal</option>
+                <option value="1">Mann</option>
+                <option value="2">Frau</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="attractedToSelect" class="form-label mt-1">Interessiert an: </label>
+            <select class="form-select" id="attractedToSelect" style="width:unset" data-th-field="*{attractedToGender}">
+                <option value="0">Egal</option>
+                <option value="1">Mann</option>
+                <option value="2">Frau</option>
+            </select>
+        </div>
+
+
+        <div class="form-group" style="margin-right:2em;">
+            <label class="form-label mt-1" for="inputMinHornlength">Hornlänge von:</label>
+            <div class="d-flex">
+                <input type="number" class="form-control" placeholder="5" id="inputMinHornlength"
+                       data-th-field="*{minHornlength}">
+                <div style="align-self:center;margin-right:10px;">bis:</div>
+                <input type="number" class="form-control" placeholder="5" id="inputMaxHornlength"
+                       data-th-field="*{maxHornlength}">
+            </div>
+        </div>
+
+
+        <div class="form-group" style="margin-right:2em;">
+            <label class="form-label mt-1" for="inputMinAge">Im Alter von:</label>
+            <div class="d-flex">
+                <input type="number" class="form-control" placeholder="0" id="inputMinAge"
+                       data-th-field="*{minAge}">
+                <div style="align-self:center;margin-right:10px">bis:</div>
+                <input type="number" class="form-control" placeholder="99" value="99" id="inputMaxAge"
+                       data-th-field="*{maxAge}">
+
+            </div>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary" style="height: fit-content;align-self: end;">Suche</button>
+    </form>
+
+    <div class="mx-auto mt-2" style="width:fit-content">
+        <ul class="pagination" id="searchPagination">
+
+        </ul>
+    </div>
+    <div class="mx-auto" style="width: fit-content;" th:if="(${pageOffset}+${pageSize})<${numOfElements}">Treffer <span th:text="(${pageOffset}+1)+' - '+(${pageOffset}+${pageSize})"></span> (von <span th:text="${numOfElements}"></span>)</div>
+    <div class="mx-auto" style="width: fit-content;" th:unless="(${pageOffset}+${pageSize})<${numOfElements}">Treffer <span th:text="(${pageOffset}+1)+' - '+${numOfElements}"></span> (von <span th:text="${numOfElements}"></span>)</div>
+
+    <div class="d-flex flex-wrap justify-content-center">
+        <div th:each="p: ${profiles}" class="m-2">
+            <div class="card mb-2" style="width:300px;">
+                <h3 class="card-header" th:text="${p.nickname}">Card header</h3>
+                <img data-th-src="@{/api/photos/}+${p.id}">
+                <div class="card-body">
+                    <p class="card-text" th:text="'Alter: '+${p.age}+' Jahre'">age</p>
+                    <p class="card-text" th:text="'Hornlänge: '+${p.hornlength}+' cm'">age</p>
+                    <p class="card-subtitle" >Beschreibung:</p>
+                    <p class="card-text" th:text="${p.description}">Description</p>
+                    <a data-th-href="@{/profile/}+${p.id}" class="card-link">Zum Profil</a>
+                </div>
+                <div class="card-footer text-muted"
+                     th:text="'Zuletzt Online: '+${p.lastseen}"></div>
+            </div>
+        </div>
     </div>
 
 </div>
+<script>
+    for (let i = 1; i <= [[${totalPages}]]; i++) {
+        let li = document.createElement("li");
+        li.className="page-item";
+        let a = document.createElement("a");
+        a.className="page-link";
+        a.href="/search/"+i;
+        a.innerText=i;
+        li.appendChild(a);
+        let pagination = document.getElementById("searchPagination");
+        pagination.appendChild(li);
+    }
+    console.log()
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

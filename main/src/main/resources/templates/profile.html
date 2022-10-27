@@ -1,49 +1,237 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <meta charset="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.0/dist/quartz/bootstrap.min.css">
+
 </head>
 <body>
+<style>
+    .form-control {
+        width: 410px;
+    }
+
+    .form-select, #hornlengthInput, #birthday {
+        width: 200px;
+    }
+
+    .imgContainer img {
+        width: 100px;
+    }
+
+    .form-select:disabled {
+        background-color: rgba(255, 255, 255, .1);
+        opacity: 1;
+    }
+
+    .heartSVG {
+        cursor: pointer;
+    }
+
+    #profilePhoto {
+        max-width: 400px;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+        /* Firefox */
+    }
+</style>
+
 <div class="container">
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-        <div class="container-fluid"><div class="navbar-nav">
-            <a class="navbar-brand" href="#">Date4u</a>
-            <a class="nav-item nav-link" href="/">Home</a>
-            <a class="nav-link nav-item" href="/profile">Profile</a>
-            <a class="nav-link nav-item" href="/search">Search</a>
-        </div></div>
-    </nav>
+    <div th:insert="fragments/nav::navbar"></div>
     <div class="jumbotron">
-        <h1 class="display-4">Willkommen in profile</h1>
-<!--        <form>-->
-<!--&lt;!&ndash;            <input type="text" data-th-value="${profile.nickname}" readonly>&ndash;&gt;-->
-<!--            <input type="text" data-th-value="${profile.hornlength}" readonly>-->
-<!--            <input type="text" data-th-value="${profile.gender}" readonly>-->
-<!--        </form>-->
-        <form data-th-object="${profile}" data-th-action="@{/save}" method="post">
-            <input type="text" data-th-field="*{id}" hidden>
-            <div class="mb-3">
-                <label for="nicknameInput" class="form-label">Nickname</label>
-                <input type="text" data-th-field="*{nickname}" id="nicknameInput"
-                       class="form-control">
+        <div class="text-center">
+            <h1 class="display-4" th:if="${myProfile}">Mein Profil:</h1>
+            <h1 class="display-4" th:unless="${myProfile}" th:text="'Profil von '+${profileFormData.nickname}"></h1>
+        </div>
+        <div th:if="${success != null}" class="alert alert-dismissible alert-success mx-auto" style="width:500px">
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            Persönliche Daten <strong>erfolgreich</strong> geändert
+        </div>
+
+
+        <div class="d-flex flex-wrap" style="justify-content: space-evenly">
+            <div style="width:410px;">
+                <div>Profilbild:</div>
+                <img id="profilePhoto" th:src="@{/api/photos/}+${profileFormData.id}">
+                <div class="badge bg-dark mt-2 mb-2" style="width: fit-content;line-height: normal;display:block;" th:text="'Likes: '+${likesCount}"></div>
+                <div class="mt-1">Alle Bilder:</div>
+                <div class="gallery d-flex flex-wrap">
+                    <div class="imgContainer" th:each="photo : ${profileFormData.allPhotos}">
+                        <img th:src="@{/api/photo/}+${photo}" th:name="${photo}" onclick="myFunction(this)">
+                    </div>
+                </div>
+
+                <form th:action="@{/addPhoto}" th:if="${myProfile}" method="post" enctype="multipart/form-data">
+                    <div class="form-group mt-1">
+                        <label for="imageUpload" class="form-label">Neues Foto hochladen:</label>
+                        <input class="form-control" name="imageUpload" type="file" id="imageUpload" accept="image/jpeg,image/png " required/>
+                        <button type="submit" class="btn btn-primary mt-1" style="float:right;">Hochladen</button>
+                    </div>
+
+                </form>
+
+
             </div>
-            <div class="mb-3">
-                <label for="hornlengthInput" class="form-label">Hornlänge</label>
-                <input type="text" data-th-field="*{hornlength}" id="hornlengthInput"
-                       class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="genderInput" class="form-label">Geschlecht</label>
-                <select data-th-field="*{gender}" id="genderInput">
-                    <option th:value="1" th:text="FEE"></option>
-                    <option th:value="2" th:text="MA"></option>
-                </select>
+            <div>
+                <form data-th-object="${profileFormData}" data-th-action="@{/profile}" method="post">
+                    <div>
+
+                        <div class="mb-2">
+                            <label for="nicknameInput" class="form-label">Nickname</label>
+                            <input type="text" data-th-field="*{nickname}" id="nicknameInput"
+                                   class="form-control" th:readonly="${!myProfile}">
+                            <span th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="badge bg-primary">Primary</span>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="form-group" style="margin-right: 10px;">
+                                <label for="birthday" class="form-label">Geburtstag</label>
+                                <input class="form-control" type="date" id="birthday" name="birthday"
+                                       data-th-field="*{birthdate}" th:readonly="${!myProfile}">
+                            </div>
+                            <div class="form-group">
+                                <label for="hornlengthInput" class="form-label">Hornlänge</label>
+                                <input type="number" data-th-field="*{hornlength}" id="hornlengthInput"
+                                       class="form-control" th:readonly="${!myProfile}">
+                                <span th:if="${#fields.hasErrors('hornlength')}" th:errors="*{hornlength}" class="badge bg-primary">Primary</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex mb-2">
+                            <div class="form-group" style="margin-right: 10px">
+                                <label for="genderInput" class="form-label">Geschlecht</label>
+                                <select class="form-select" data-th-field="*{gender}" id="genderInput" th:disabled="${!myProfile}">
+                                    <option value="1">Männlich</option>
+                                    <option value="2">Weiblich</option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="badge bg-primary">Primary</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="genderInput" class="form-label">Interessiert an</label>
+                                <select class="form-select" data-th-field="*{attractedToGender}" id="attractedToInput" th:disabled="${!myProfile}">
+                                    <option value="1">Männern</option>
+                                    <option value="2">Frauen</option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('attractedToGender')}" th:errors="*{attractedToGender}" class="badge bg-primary">Primary</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label for="descriptionArea" class="form-label">Beschreibung</label>
+                            <textarea class="form-control" id="descriptionArea" th:field="*{description}" th:readonly="${!myProfile}"
+                                      rows="3"></textarea>
+                            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="badge bg-primary">Primary</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" th:if="${myProfile}">Speichern</button>
+
+                    </div>
+                </form>
+                <div th:unless="${myProfile}">
+                    <form th:action="@{/addLike}" method="post" class="mx-auto d-flex justify-content-center align-items-center">
+                        <input type="hidden" name="likeeId" th:value="${likeeId}" style="visibility: hidden">
+                        <div th:unless="${liked}" style="margin-right: 20px">Lass ein Like da!</div>
+                        <div th:if="${liked}" style="margin-right: 20px"> Gefällt dir doch nicht mehr? <br>Ziehe deinen
+                                                                          Like zurück.
+                        </div>
+                        <button type="submit" th:unless="${liked}">
+                            <svg class="heartSVG" xmlns="http://www.w3.org/2000/svg" id="body_1" width="51" height="51">
+                                <g transform="matrix(0.101593636 0 0 0.101593636 0 0)">
+                                    <g>
+                                        <g>
+                                            <path d="M370.994 49.998C 309.485 49.998 258.698 95.892 250.99998 155.304C 243.30199 95.892 192.51498 49.998 131.00598 49.998C 64.176 49.998 10 104.174 10 171.004C 10 237.83398 90.283 306.53198 126.45 337.578C 160.239 366.582 251 452.002 251 452.002C 251 452.002 341.761 366.58203 375.55 337.578C 411.717 306.532 492 237.834 492 171.004C 492 104.173996 437.824 49.998 370.994 49.998z" stroke="none" fill="#FF1D25" fill-rule="nonzero" fill-opacity="0.09803922"/>
+                                            <path d="M251 462.002C 248.536 462.002 246.072 461.096 244.146 459.28403C 243.23999 458.43103 153.165 373.68903 119.936 345.16504L119.936 345.16504L119.588 344.86603C 80.771 311.548 0 242.216 0 171.004C 0 98.767 58.769 39.998 131.006 39.998C 183.965 39.998 230.553 71.912 251 118.380005C 271.44598 71.912 318.035 39.998 370.99402 39.998C 443.231 39.998 502 98.767 502 171.004C 502 242.215 421.229 311.547 382.412 344.866L382.412 344.866L382.064 345.165C 348.833 373.69 258.76 458.431 257.854 459.284C 255.928 461.096 253.464 462.002 251 462.002zM131.006 59.998C 69.797 59.998 20 109.795 20 171.004C 20 233.025 98.917 300.765 132.61499 329.69098L132.61499 329.69098L132.963 329.99C 161.103 354.145 229.168 417.805 251 438.284C 272.832 417.805 340.897 354.145 369.037 329.99L369.037 329.99L369.38498 329.69098C 403.083 300.765 482 233.025 482 171.004C 482 109.795 432.203 59.998 370.99402 59.998C 315.37503 59.998 268.053 101.523 260.91702 156.589C 260.27103 161.573 256.02603 165.304 251.00003 165.304C 245.97403 165.304 241.72903 161.574 241.08304 156.589C 233.948 101.523 186.625 59.998 131.006 59.998z" stroke="none" fill="#000000" fill-rule="nonzero"/>
+                                        </g>
+                                        <g>
+                                            <path d="M252.008 412.021C 249.56299 412.021 247.11299 411.13 245.185 409.33C 218.25099 384.18 169.716 339.112 147.276 319.84998L147.276 319.84998L146.972 319.589C 143.201 316.352 138.926 312.68198 134.32 308.65298C 130.16301 305.017 129.74 298.69897 133.37701 294.543C 137.01201 290.385 143.33002 289.963 147.48701 293.6C 152.02301 297.56702 156.26001 301.204 159.99901 304.413L159.99901 304.413L160.30301 304.67398C 181.88101 323.197 225.79501 363.861 258.83502 394.71198C 262.872 398.48196 263.088 404.80896 259.31903 408.84598C 257.35 410.955 254.682 412.021 252.008 412.021z" stroke="none" fill="#000000" fill-rule="nonzero"/>
+                                        </g>
+                                        <g>
+                                            <path d="M113.283 285.803C 110.772995 285.803 108.26199 284.86502 106.319 282.978C 99.708 276.561 93.453 270.174 87.727005 263.996C 83.97301 259.946 84.213005 253.619 88.26401 249.864C 92.31401 246.11 98.64101 246.35 102.39601 250.401C 107.88401 256.322 113.891014 262.454 120.250015 268.628C 124.21301 272.47498 124.307014 278.806 120.460014 282.76898C 118.498 284.788 115.892 285.803 113.283 285.803z" stroke="none" fill="#000000" fill-rule="nonzero"/>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                        <button type="submit" th:if="${liked}">
+                            <svg class="heartSVG" xmlns="http://www.w3.org/2000/svg" id="body_1" width="51" height="51">
+
+                                <g transform="matrix(0.101593636 0 0 0.101593636 0 0)">
+                                    <g>
+                                        <g>
+                                            <path d="M370.994 49.998C 309.485 49.998 258.698 95.892 250.99998 155.304C 243.30199 95.892 192.51498 49.998 131.00598 49.998C 64.176 49.998 10 104.174 10 171.004C 10 237.83398 90.283 306.53198 126.45 337.578C 160.239 366.582 251 452.002 251 452.002C 251 452.002 341.761 366.58203 375.55 337.578C 411.717 306.532 492 237.834 492 171.004C 492 104.173996 437.824 49.998 370.994 49.998z" stroke="none" fill="#FF1D25" fill-rule="nonzero"/>
+                                            <path d="M251 462.002C 248.536 462.002 246.072 461.096 244.146 459.28403C 243.23999 458.43103 153.165 373.68903 119.936 345.16504L119.936 345.16504L119.588 344.86603C 80.771 311.548 0 242.216 0 171.004C 0 98.767 58.769 39.998 131.006 39.998C 183.965 39.998 230.553 71.912 251 118.380005C 271.44598 71.912 318.035 39.998 370.99402 39.998C 443.231 39.998 502 98.767 502 171.004C 502 242.215 421.229 311.547 382.412 344.866L382.412 344.866L382.064 345.165C 348.833 373.69 258.76 458.431 257.854 459.284C 255.928 461.096 253.464 462.002 251 462.002zM131.006 59.998C 69.797 59.998 20 109.795 20 171.004C 20 233.025 98.917 300.765 132.61499 329.69098L132.61499 329.69098L132.963 329.99C 161.103 354.145 229.168 417.805 251 438.284C 272.832 417.805 340.897 354.145 369.037 329.99L369.037 329.99L369.38498 329.69098C 403.083 300.765 482 233.025 482 171.004C 482 109.795 432.203 59.998 370.99402 59.998C 315.37503 59.998 268.053 101.523 260.91702 156.589C 260.27103 161.573 256.02603 165.304 251.00003 165.304C 245.97403 165.304 241.72903 161.574 241.08304 156.589C 233.948 101.523 186.625 59.998 131.006 59.998z" stroke="none" fill="#000000" fill-rule="nonzero"/>
+                                        </g>
+                                        <g>
+                                            <path d="M252.008 412.021C 249.56299 412.021 247.11299 411.13 245.185 409.33C 218.25099 384.18 169.716 339.112 147.276 319.84998L147.276 319.84998L146.972 319.589C 143.201 316.352 138.926 312.68198 134.32 308.65298C 130.16301 305.017 129.74 298.69897 133.37701 294.543C 137.01201 290.385 143.33002 289.963 147.48701 293.6C 152.02301 297.56702 156.26001 301.204 159.99901 304.413L159.99901 304.413L160.30301 304.67398C 181.88101 323.197 225.79501 363.861 258.83502 394.71198C 262.872 398.48196 263.088 404.80896 259.31903 408.84598C 257.35 410.955 254.682 412.021 252.008 412.021z" stroke="none" fill="#000000" fill-rule="nonzero"/>
+                                        </g>
+                                        <g>
+                                            <path d="M113.283 285.803C 110.772995 285.803 108.26199 284.86502 106.319 282.978C 99.708 276.561 93.453 270.174 87.727005 263.996C 83.97301 259.946 84.213005 253.619 88.26401 249.864C 92.31401 246.11 98.64101 246.35 102.39601 250.401C 107.88401 256.322 113.891014 262.454 120.250015 268.628C 124.21301 272.47498 124.307014 278.806 120.460014 282.76898C 118.498 284.788 115.892 285.803 113.283 285.803z" stroke="none" fill="#000000" fill-rule="nonzero"/>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+
+                    </form>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Speichern</button>
+        </div>
+
+
+    </div>
+</div>
+<div class="modal" id="myModal">
+    <div class="modal-dialog" role="document">
+        <form th:action="@{/updateProfilePhoto}" method="post">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute;top:5px;right:5px;">
+                        <span aria-hidden="true"></span>
+                    </button>
+                    <img id="expandedImg" style="width:100%">
+                    <input type="text" id="imgNameInput" name="imgNameInput" style="visibility: hidden;" value="">
+                </div>
+                <div class="modal-footer" style="justify-content: space-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:unless="${myProfile}">
+                        Schließen
+                    </button>
+                    <button type="submit" name="action" value="delete" class="btn btn-dark" th:if="${myProfile}">
+                        Bild entfernen
+                    </button>
+                    <button type="submit" name="action" value="update" class="btn btn-primary" th:if="${myProfile}">
+                        Als Profilbild nehmen
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 </div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script>
+
+    $('#myModal').on('hidden.bs.modal', function () {
+        $("#imgNameInput").attr("value", "");
+    })
+
+    function myFunction(img) {
+        $("#myModal").modal("show");
+        $("#imgNameInput").attr("value", img.name);
+        $("#expandedImg").attr("src", img.src);
+    }
+
+
+</script>
 </body>
 </html>
